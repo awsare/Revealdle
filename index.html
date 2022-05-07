@@ -2,15 +2,17 @@
 <html lang="en-US">
 
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width">
-  <title>Memordle</title>
-  <link href="style.css" rel="stylesheet" type="text/css" />
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>Memordle</title>
+	<link href="style.css" rel="stylesheet" type="text/css" />
     <script src="script.js" defer></script>
 </head>
 
 <body>
-    <div data-guess-grid class = "guess-grid">
+	<div class="alert-container" data-alert-container>
+	</div>
+	<div data-guess-grid class = "guess-grid">
         <div class="tile"></div>
         <div class="tile"></div>
         <div class="tile"></div>
@@ -42,7 +44,7 @@
         <div class="tile"></div>
         <div class="tile"></div>
     </div>
-  <div class = "keyboard">
+	<div data-keyboard class = "keyboard">
       <button class="key" data-key="Q">Q</button>
       <button class="key" data-key="W">W</button>
       <button class="key" data-key="E">E</button>
@@ -59,15 +61,15 @@
       <button class="key" data-key="D">D</button>
       <button class="key" data-key="F">F</button>
       <button class="key" data-key="G">G</button>
-      <button class="key correct" data-key="H">H</button>
+      <button class="key" data-key="H">H</button>
       <button class="key" data-key="J">J</button>
       <button class="key" data-key="K">K</button>
       <button class="key" data-key="L">L</button>
       <div class="space"></div>
       <button data-enter class = "key large">Enter</button>
       <button class="key" data-key="Z">Z</button>
-      <button class="key wrong" data-key="X">X</button>
-      <button class="key wrong-location" data-key="C">C</button>
+      <button class="key" data-key="X">X</button>
+      <button class="key" data-key="C">C</button>
       <button class="key" data-key="V">V</button>
       <button class="key" data-key="B">B</button>
       <button class="key" data-key="N">N</button>
