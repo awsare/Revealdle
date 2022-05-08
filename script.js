@@ -85,6 +85,17 @@ function pressKey(key) {
     nextTile.dataset.letter = key.toLowerCase()
     nextTile.textContent = key
     nextTile.dataset.state = "active"
+
+	
+    nextTile.classList.add("enter")
+
+	nextTile.addEventListener(
+		"animationend",
+		() => {
+      		nextTile.classList.remove("enter")
+		},
+		{ once: true }
+	) 
 }
 
 function deleteKey() {

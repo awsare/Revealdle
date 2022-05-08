@@ -3,6 +3,17 @@
 *, *::after, *::before {
     box-sizing: border-box;
     font-family: 'Poppins', sans-serif;
+	touch-action: manipulation;
+}
+
+h1 {
+	font-size: 3em;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    user-select: none;
+	color: white;
 }
 
 body {
@@ -11,7 +22,7 @@ body {
     flex-direction: column;
     min-height: 100vh;
     margin: 0;
-    padding: 5em;
+    padding: 3em;
     font-size: clamp(.5rem, 2.5vmin, 1rem);
 }
 
@@ -109,10 +120,11 @@ svg {
 
 .tile {
     border-radius: .25em;
-    font-size: 2em;
+    transform: scale(1.0);
     color: white;
 	background-color: hsl(240, 3%, 7%);
     border: 0.05em solid hsl(240, 2%, 23%);
+	font-size: 2em;
     text-transform: uppercase;
     font-weight: bold;
     display: flex;
@@ -137,6 +149,24 @@ svg {
 
 .tile.flip {
 	transform: rotateX(90deg);
+}
+
+.tile.enter {
+	animation: enter 75ms ease-in-out;
+}
+
+@keyframes enter {
+	0% {
+		transform: scale(1.0);
+	}
+	
+	50% {
+		transform: scale(1.1);
+	}
+
+	100% {
+		transform: scale(1.0);
+	}
 }
 
 @keyframes shake {
