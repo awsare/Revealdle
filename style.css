@@ -85,6 +85,12 @@ svg {
 	--lightness: 51%;
 }
 
+.key.needs-update {
+	--hue: 49;
+    --saturation: 51%;
+    --lightness: 47%;
+}
+
 .key:focus {
   outline: none;
   box-shadow: none;

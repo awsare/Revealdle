@@ -42,29 +42,24 @@ function handleMouseClick(e) {
         return
     }
 
-	/*
-	if (e.target.classList.contains("hidden")) {
-		setTimeout(() => {
-    		e.target.classList.add("flip")
-  		}, (FLIP_ANIMATION_DURATION) / 2)
+	if (e.target.classList.contains("hidden") && reveals < MAX_REVEALS && !e.target.classList.contains("old")) {
+		reveals++
+		const letter = e.target.textContent
+  		const key = keyboard.querySelector(`[data-key="${letter}"i]`)
+		
+    	e.target.classList.add("flip")
 
 		e.target.addEventListener(
 			"transitionend",
 			() => {
+      			e.target.classList.remove("flip")
 				e.target.classList.remove("hidden")
+				key.classList.remove("needs-update")
+				key.classList.remove("hidden")
+				key.classList.add("revealed")
 			},
 			{ once: true }
 		)
-		
-	} */
-
-	if (e.target.classList.contains("hidden") && reveals < MAX_REVEALS && !e.target.classList.contains("old")) {
-		reveals++
-		const letter = e.target.textContent
-  		const key = keyboard.querySelector(`[data-key="${letter}"i]`)	
-		e.target.classList.remove("hidden")
-		key.classList.remove("hidden")
-		key.classList.add("revealed")
 	}
 }
 
@@ -145,6 +140,7 @@ function flipTile(tile, index, array, guess) {
     "transitionend",
     () => {
       tile.classList.remove("flip")
+		
 		if (targetWord !== guess) {
 			tile.classList.add("hidden")
 			if (!key.classList.contains("revealed")) {
@@ -154,6 +150,9 @@ function flipTile(tile, index, array, guess) {
 	  
       if (targetWord[index] === letter) {
         tile.dataset.state = "correct"
+		if (key.classList.contains("wrong-location") && targetWord !== guess) {
+			key.classList.add("needs-update")
+		}
         key.classList.add("correct")
       } else if (targetWord.includes(letter)) {
         tile.dataset.state = "wrong-location"
