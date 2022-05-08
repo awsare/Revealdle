@@ -79,6 +79,17 @@ svg {
     --lightness: 43%;
 }
 
+.key.hidden {
+	--hue: 240;
+	--saturation: 3%;
+	--lightness: 51%;
+}
+
+.key:focus {
+  outline: none;
+  box-shadow: none;
+}
+
 .guess-grid {
     display: grid;
     justify-content: center;
@@ -94,6 +105,7 @@ svg {
     border-radius: .25em;
     font-size: 2em;
     color: white;
+	background-color: hsl(240, 3%, 7%);
     border: 0.05em solid hsl(240, 2%, 23%);
     text-transform: uppercase;
     font-weight: bold;
@@ -102,6 +114,11 @@ svg {
     align-items: center;
     user-select: none;
 	transition: transform 250ms linear;
+}
+
+.tile:focus {
+  outline: none;
+  box-shadow: none;
 }
 
 .tile.shake {
@@ -185,6 +202,11 @@ svg {
 .tile[data-state="correct"] {
     border: none;
     background-color: hsl(115, 29%, 43%)
+}
+
+.tile.hidden {
+	border: 0.05em solid hsl(240, 2%, 23%);
+	background-color: hsl(240, 3%, 7%);
 }
 
 .alert-container {

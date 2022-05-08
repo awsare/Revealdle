@@ -1,5 +1,3 @@
-
-
 const compliments = ["Cheater","Lucky","Genius","Magnificent","Great","Close one"]
 const keyboard = document.querySelector("[data-keyboard]")
 const alertContainer = document.querySelector("[data-alert-container]")
@@ -41,6 +39,30 @@ function handleMouseClick(e) {
         deleteKey()
         return
     }
+
+	/*
+	if (e.target.classList.contains("hidden")) {
+		setTimeout(() => {
+    		e.target.classList.add("flip")
+  		}, (FLIP_ANIMATION_DURATION) / 2)
+
+		e.target.addEventListener(
+			"transitionend",
+			() => {
+				e.target.classList.remove("hidden")
+			},
+			{ once: true }
+		)
+		
+	} */
+
+	if (e.target.classList.contains("hidden")) {
+		const letter = e.target.textContent
+  		const key = keyboard.querySelector(`[data-key="${letter}"i]`)	
+		e.target.classList.remove("hidden")
+		key.classList.remove("hidden")
+		key.classList.add("revealed")
+	}
 }
 
 function handleKeyPress(e) {
@@ -105,11 +127,18 @@ function flipTile(tile, index, array, guess) {
   setTimeout(() => {
     tile.classList.add("flip")
   }, (index * FLIP_ANIMATION_DURATION) / 2)
-
+	
   tile.addEventListener(
     "transitionend",
     () => {
       tile.classList.remove("flip")
+		if (targetWord !== guess) {
+			tile.classList.add("hidden")
+			if (!key.classList.contains("revealed")) {
+				key.classList.add("hidden")
+			}
+		}
+	  
       if (targetWord[index] === letter) {
         tile.dataset.state = "correct"
         key.classList.add("correct")
