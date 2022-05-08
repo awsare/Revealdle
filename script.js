@@ -1,4 +1,4 @@
-const compliments = ["Cheater","Lucky","Genius","Magnificent","Great","Close one"]
+const compliments = ["Cheater","Lucky","Genius","Brilliant", "Magnificent","Splendid","Great","Close one"]
 const keyboard = document.querySelector("[data-keyboard]")
 const alertContainer = document.querySelector("[data-alert-container]")
 const guessGrid = document.querySelector("[data-guess-grid]")
@@ -6,15 +6,17 @@ const WORD_LENGTH = 5
 const FLIP_ANIMATION_DURATION = 500
 const DANCE_ANIMATION_DURATION = 500
 const MAX_ALERTS = 3
-const offsetFromDate = new Date(2022, 0, 1)
-const msOffset = Date.now() - offsetFromDate
-const dayOffset = msOffset / 1000 / 60 / 60 / 24
-const targetWord = targetWords[Math.floor(dayOffset)]
+const MAX_REVEALS = 3
+const offsetFromDate = new Date(2024, 0, 1)
+const msOffset = offsetFromDate - Date.now()
+const dayOffset = Math.floor(msOffset / 1000 / 60 / 60 / 24)
+const targetWord = targetWords[dayOffset]
 
-var guesses = 0
+let guesses = 0
+var reveals = 0;
 
 startInteraction()
-console.log(targetWord)
+console.log('targetWord: "' + targetWord.toUpperCase() + '"')
 
 function startInteraction() {
     document.addEventListener("click", handleMouseClick)
@@ -56,7 +58,8 @@ function handleMouseClick(e) {
 		
 	} */
 
-	if (e.target.classList.contains("hidden")) {
+	if (e.target.classList.contains("hidden") && reveals < MAX_REVEALS && !e.target.classList.contains("old")) {
+		reveals++
 		const letter = e.target.textContent
   		const key = keyboard.querySelector(`[data-key="${letter}"i]`)	
 		e.target.classList.remove("hidden")
@@ -100,6 +103,8 @@ function deleteKey() {
 
 function submitGuess() {
     const activeTiles = [...getActiveTiles()]
+	reveals = 0
+	
     if (activeTiles.length !== WORD_LENGTH) {
         showAlert("Not enough letters")
         shakeTiles(activeTiles)
@@ -117,6 +122,13 @@ function submitGuess() {
 	}
 
 	stopInteraction()
+	let olds = guessGrid.querySelectorAll(".hidden:not(.old)")
+	if (olds !== null) {
+		olds.forEach((tile) => {
+			tile.classList.add("old")
+		});
+	}
+	
 	activeTiles.forEach((...params) => flipTile(...params, guess))
 	guesses++
 }
@@ -127,6 +139,7 @@ function flipTile(tile, index, array, guess) {
   setTimeout(() => {
     tile.classList.add("flip")
   }, (index * FLIP_ANIMATION_DURATION) / 2)
+
 	
   tile.addEventListener(
     "transitionend",
