@@ -6,9 +6,9 @@
 	touch-action: manipulation;
 }
 
-h1 {
-	font-size: 3em;
-    font-weight: bold;
+p {
+	font-size: 0.65em;
+    font-weight: normal;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -20,16 +20,16 @@ body {
     background-color: hsl(240, 3%, 7%);
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
+    min-height: 90vh;
     margin: 0;
-    padding: 3em;
+    padding: 2em;
     font-size: clamp(.5rem, 2.5vmin, 1rem);
 }
 
 .keyboard {
     display: grid;
     grid-template-columns: repeat(20, minmax(auto, 1.25em));
-    grid-auto-rows: 3em;
+    grid-auto-rows: 2.75em;
     gap: .3em;
     justify-content: center;
 }
@@ -90,16 +90,16 @@ svg {
     --lightness: 43%;
 }
 
-.key.hidden {
-	--hue: 240;
-	--saturation: 3%;
-	--lightness: 51%;
-}
-
 .key.needs-update {
 	--hue: 49;
     --saturation: 51%;
     --lightness: 47%;
+}
+
+.key.hidden {
+	--hue: 240;
+	--saturation: 3%;
+	--lightness: 51%;
 }
 
 .key:focus {
@@ -115,7 +115,8 @@ svg {
     grid-template-columns: repeat(5, 4em);
     grid-template-rows: repeat(8, 4em);
     gap: .25em;
-    margin-bottom: 1em;
+    margin-bottom: 1.5em;
+	width: 100%;
 }
 
 .tile {

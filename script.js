@@ -7,13 +7,13 @@ const FLIP_ANIMATION_DURATION = 500
 const DANCE_ANIMATION_DURATION = 500
 const MAX_ALERTS = 3
 const MAX_REVEALS = 3
-const offsetFromDate = new Date(2024, 0, 1)
+const offsetFromDate = new Date(2023, 0, 1)
 const msOffset = offsetFromDate - Date.now()
 const dayOffset = Math.floor(msOffset / 1000 / 60 / 60 / 24)
 const targetWord = targetWords[dayOffset]
 
 let guesses = 0
-var reveals = 0;
+let reveals = 0
 
 startInteraction()
 console.log('targetWord: "' + targetWord.toUpperCase() + '"')
@@ -57,10 +57,76 @@ function handleMouseClick(e) {
 				key.classList.remove("needs-update")
 				key.classList.remove("hidden")
 				key.classList.add("revealed")
+
+				const others = guessGrid.querySelectorAll(`[data-letter="${letter}"i]`)
+
+				stateCheck(others, e.target, key)
+				
 			},
 			{ once: true }
 		)
 	}
+}
+
+function stateCheck(others, mine, key) {
+	let revTiles = []
+	let bonds = [false, false, false , false , false]
+
+	//get revealed tiles
+	others.forEach((tile) => {
+		if (!tile.classList.contains("hidden")) {
+			revTiles.push(tile)
+		}
+	});
+	
+	//bond the correct tiles first
+	revTiles.forEach((tile) => {
+		if (tile.classList.contains("correct")) {
+			bonds[tile.dataset.index - 1] = true
+			key.classList.add("correct")
+		}
+	});
+
+	//then bond the wrong-location tiles
+	
+	revTiles.forEach((tile) => {
+		if (tile.classList.contains("wrong-location")) {
+			let hasBonded = false
+			
+			for (var u = 0; u < targetWord.length; u++) {
+   				if (bonds[u] === false && targetWord[u] === tile.textContent) {
+					bonds[u] = true
+					hasBonded = true
+					u = 99
+				}
+ 			}
+
+			if (hasBonded === false) {
+
+				if (tile !== mine) {
+					tile.classList.add("flip")
+
+					tile.addEventListener(
+						"transitionend",
+						() => {
+							tile.classList.remove("flip")
+							
+							tile.classList.remove("wrong-location")
+							tile.classList.add("wrong")
+							tile.dataset.state = "wrong"
+							key.classList.add("wrong-location")
+						},
+					{ once: true }
+					) 
+				} else {
+					tile.classList.remove("wrong-location")
+					tile.classList.add("wrong")
+					tile.dataset.state = "wrong"
+				}
+			}
+		}
+	});
+
 }
 
 function handleKeyPress(e) {
@@ -73,7 +139,7 @@ function handleKeyPress(e) {
         return
     }
     if (e.key.match(/^[a-z]$/)) {
-        pressKey(e.key)
+        pressKey(e.key.toLowerCase())
         return
     }
 }
@@ -85,7 +151,6 @@ function pressKey(key) {
     nextTile.dataset.letter = key.toLowerCase()
     nextTile.textContent = key
     nextTile.dataset.state = "active"
-
 	
     nextTile.classList.add("enter")
 
@@ -121,13 +186,14 @@ function submitGuess() {
 		return word + tile.dataset.letter
 	}, "")
 
-	if (!dictionary.includes(guess)) {
+	if (!dictionary.concat(targetWords).includes(guess)) {
 		showAlert("Word not found")
 		shakeTiles(activeTiles)
 		return
 	}
 
 	stopInteraction()
+	
 	let olds = guessGrid.querySelectorAll(".hidden:not(.old)")
 	if (olds !== null) {
 		olds.forEach((tile) => {
@@ -161,15 +227,21 @@ function flipTile(tile, index, array, guess) {
 	  
       if (targetWord[index] === letter) {
         tile.dataset.state = "correct"
-		if (key.classList.contains("wrong-location") && targetWord !== guess) {
+		tile.classList.add("correct")
+		if (key.classList.contains("wrong-location")) {
 			key.classList.add("needs-update")
+		} else {
+			key.classList.add("correct")
+			key.classList.remove("wrong-location")
 		}
-        key.classList.add("correct")
+        
       } else if (targetWord.includes(letter)) {
         tile.dataset.state = "wrong-location"
+		tile.classList.add("wrong-location")
         key.classList.add("wrong-location")
       } else {
         tile.dataset.state = "wrong"
+		tile.classList.add("wrong")
         key.classList.add("wrong")
       }
 
