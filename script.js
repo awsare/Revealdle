@@ -58,7 +58,7 @@ function handleMouseClick(e) {
 				key.classList.remove("hidden")
 				key.classList.add("revealed")
 
-				const others = guessGrid.querySelectorAll(`[data-letter="${letter}"i]`)
+				const others = guessGrid.querySelectorAll(`[data-letter="${letter}"i]:not(.old)`)
 
 				stateCheck(others, e.target, key)
 				
@@ -194,7 +194,9 @@ function submitGuess() {
 
 	stopInteraction()
 	
-	let olds = guessGrid.querySelectorAll(".hidden:not(.old)")
+	guesses++
+	
+	let olds = guessGrid.querySelectorAll(`[data-letter]:not([data-row="${guesses}"i])`)
 	if (olds !== null) {
 		olds.forEach((tile) => {
 			tile.classList.add("old")
@@ -202,7 +204,7 @@ function submitGuess() {
 	}
 	
 	activeTiles.forEach((...params) => flipTile(...params, guess))
-	guesses++
+	
 }
 
 function flipTile(tile, index, array, guess) {
