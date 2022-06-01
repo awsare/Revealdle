@@ -174,7 +174,7 @@ function deleteKey() {
 
 function submitGuess() {
     const activeTiles = [...getActiveTiles()]
-	reveals = 0
+	
 	
     if (activeTiles.length !== WORD_LENGTH) {
         showAlert("Not enough letters")
@@ -195,6 +195,7 @@ function submitGuess() {
 	stopInteraction()
 	
 	guesses++
+	reveals = 0
 	
 	let olds = guessGrid.querySelectorAll(`[data-letter]:not([data-row="${guesses}"i])`)
 	if (olds !== null) {
