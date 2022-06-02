@@ -7,8 +7,8 @@ const FLIP_ANIMATION_DURATION = 500
 const DANCE_ANIMATION_DURATION = 500
 const MAX_ALERTS = 3
 const MAX_REVEALS = 3
-const offsetFromDate = new Date(2023, 0, 1)
-const msOffset = offsetFromDate - Date.now()
+const offsetFromDate = new Date(2022, 4, 6)
+const msOffset = Date.now() - offsetFromDate
 const dayOffset = Math.floor(msOffset / 1000 / 60 / 60 / 24)
 const targetWord = targetWords[dayOffset]
 
