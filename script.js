@@ -1,4 +1,4 @@
-const compliments = ["Cheater","Lucky","Genius","Brilliant", "Magnificent","Splendid","Great","Close one"]
+const compliments = ["Cheater","Lucky","Genius","Brilliant", "Clever","Great","Close one","Phew"]
 const keyboard = document.querySelector("[data-keyboard]")
 const alertContainer = document.querySelector("[data-alert-container]")
 const guessGrid = document.querySelector("[data-guess-grid]")
@@ -213,7 +213,7 @@ function flipTile(tile, index, array, guess) {
   const key = keyboard.querySelector(`[data-key="${letter}"i]`)
   setTimeout(() => {
     tile.classList.add("flip")
-  }, (index * FLIP_ANIMATION_DURATION) / 2)
+  }, ((Math.pow(1.35, index) - 0.35)* FLIP_ANIMATION_DURATION) / 2)
 
 	
   tile.addEventListener(
