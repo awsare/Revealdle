@@ -46,7 +46,8 @@ function handleMouseClick(e) {
 		reveals++
 		const letter = e.target.textContent
   		const key = keyboard.querySelector(`[data-key="${letter}"i]`)
-		
+
+		stopInteraction()
     	e.target.classList.add("flip")
 
 		e.target.addEventListener(
@@ -61,7 +62,16 @@ function handleMouseClick(e) {
 				const others = guessGrid.querySelectorAll(`[data-letter="${letter}"i]:not(.old)`)
 
 				stateCheck(others, e.target, key)
+
 				
+			},
+			{ once: true }
+		)
+
+		e.target.addEventListener(
+			"transitionend",
+			() => {
+				startInteraction()
 			},
 			{ once: true }
 		)
@@ -102,7 +112,6 @@ function stateCheck(others, mine, key) {
  			}
 
 			if (hasBonded === false) {
-
 				if (tile !== mine) {
 					tile.classList.add("flip")
 
@@ -149,7 +158,7 @@ function pressKey(key) {
     if (activeTiles.length >= WORD_LENGTH) return
     const nextTile = guessGrid.querySelector(":not([data-letter])")
     nextTile.dataset.letter = key.toLowerCase()
-    nextTile.textContent = key
+    nextTile.textContent = key.toLowerCase()
     nextTile.dataset.state = "active"
 	
     nextTile.classList.add("enter")
