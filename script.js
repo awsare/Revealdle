@@ -33,6 +33,8 @@ function stopInteraction() {
 }
 
 function handleMouseClick(e) {
+	focus()
+	
 	if(e.target.matches("[data-title]")) {
 		newWord()
 		return
@@ -92,6 +94,29 @@ function handleMouseClick(e) {
 	}
 }
 
+function handleKeyPress(e) {
+	focus()
+	if (hasWon) {
+		return
+	}
+    if (e.key === "Enter") {
+        submitGuess()
+        return
+    }
+    if (e.key === "Backspace" || e.key === "Delete") {
+        deleteKey()
+        return
+    }
+    if (e.key.match(/^[a-z]$/)) {
+        pressKey(e.key.toLowerCase())
+        return
+    }
+}
+
+function focus() {
+	document.querySelector(".tile").focus();
+}
+
 function newWord() {
 	stopInteraction()
 
@@ -127,6 +152,7 @@ function newWord() {
 	});
 
 	showAlert("New word generated")
+	focus()
 	
 	startInteraction()
 }
@@ -189,24 +215,6 @@ function stateCheck(others, mine, key) {
 		}
 	});
 
-}
-
-function handleKeyPress(e) {
-	if (hasWon) {
-		return
-	}
-    if (e.key === "Enter") {
-        submitGuess()
-        return
-    }
-    if (e.key === "Backspace" || e.key === "Delete") {
-        deleteKey()
-        return
-    }
-    if (e.key.match(/^[a-z]$/)) {
-        pressKey(e.key.toLowerCase())
-        return
-    }
 }
 
 function pressKey(key) {
