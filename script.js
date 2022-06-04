@@ -10,12 +10,16 @@ const MAX_REVEALS = 3
 const offsetFromDate = new Date(2022, 4, 6)
 const msOffset = Date.now() - offsetFromDate
 const dayOffset = Math.floor(msOffset / 1000 / 60 / 60 / 24)
-const targetWord = targetWords[dayOffset]
+
+let targetWord = targetWords[dayOffset]
 
 let guesses = 0
 let reveals = 0
 
+let hasWon = false
+
 startInteraction()
+showAlert("Daily word generated")
 console.log('targetWord: "' + targetWord.toUpperCase() + '"')
 
 function startInteraction() {
@@ -29,6 +33,15 @@ function stopInteraction() {
 }
 
 function handleMouseClick(e) {
+	if(e.target.matches("[data-title]")) {
+		newWord()
+		return
+	}
+
+	if (hasWon) {
+		return
+	}
+	
     if (e.target.matches("[data-key]")) {
         pressKey(e.target.dataset.key)
         return
@@ -41,6 +54,7 @@ function handleMouseClick(e) {
         deleteKey()
         return
     }
+	
 
 	if (e.target.classList.contains("hidden") && reveals < MAX_REVEALS && !e.target.classList.contains("old")) {
 		reveals++
@@ -76,6 +90,45 @@ function handleMouseClick(e) {
 			{ once: true }
 		)
 	}
+}
+
+function newWord() {
+	stopInteraction()
+
+	guesses = 0
+	reveals = 0
+	hasWon = false
+	
+	const tiles = guessGrid.querySelectorAll('[data-letter]')
+
+	tiles.forEach((tile) => {
+		tile.textContent = ""
+    	delete tile.dataset.state
+    	delete tile.dataset.letter
+		tile.className = "tile"
+	});
+
+	const keys = keyboard.querySelectorAll(".key:not(.large)")
+
+	keys.forEach((key) => {
+		key.className = "key"
+	});
+
+	targetWord = targetWords[Math.floor(Math.random() * (targetWords.length + 2))]
+	console.log('targetWord: "' + targetWord.toUpperCase() + '"')
+
+	const alerts = alertContainer.querySelectorAll(".alert")
+
+	alerts.forEach((alert) => {
+		alert.className = "alert hide"
+		alert.addEventListener("transitionend", () => {
+			alert.remove()
+		})
+	});
+
+	showAlert("New word generated")
+	
+	startInteraction()
 }
 
 function stateCheck(others, mine, key) {
@@ -139,6 +192,9 @@ function stateCheck(others, mine, key) {
 }
 
 function handleKeyPress(e) {
+	if (hasWon) {
+		return
+	}
     if (e.key === "Enter") {
         submitGuess()
         return
@@ -305,14 +361,14 @@ function checkWinLose(guess, tiles) {
 	if (guess === targetWord) {
 		showAlert(compliments[guesses - 1], 5000)
 		danceTiles(tiles)
-		stopInteraction()
+		hasWon = true
 		return
 	}
 
 	const remainingTiles = guessGrid.querySelectorAll(":not([data-letter])")
 	if (remainingTiles.length === 0) {
 		showAlert(targetWord.toUpperCase(), null)
-		stopInteraction()
+		hasWon = true
 	}
 }
 

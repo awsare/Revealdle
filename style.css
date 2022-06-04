@@ -6,14 +6,26 @@
 	touch-action: manipulation;
 }
 
-p {
-	font-size: 0.65em;
-    font-weight: normal;
+.title-container {
+	display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.title {
+	font-size: 3em;
+    font-weight: bold;
     display: flex;
     justify-content: center;
     align-items: center;
-    user-select: none;
 	color: white;
+	background-color: transparent;
+	border: transparent;
+}
+
+.title:focus {
+  outline: none;
+  box-shadow: none;
 }
 
 body {
@@ -123,7 +135,7 @@ svg {
     border-radius: .25em;
     transform: scale(1.0);
     color: white;
-	background-color: hsl(240, 3%, 7%);
+	background-color: transparent;
     border: 0.05em solid hsl(240, 2%, 23%);
 	font-size: 2em;
     text-transform: uppercase;
