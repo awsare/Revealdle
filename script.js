@@ -95,6 +95,7 @@ function handleMouseClick(e) {
 }
 
 function handleKeyPress(e) {
+	console.log(e.key)
 	focus()
 	if (hasWon) {
 		return
@@ -107,7 +108,7 @@ function handleKeyPress(e) {
         deleteKey()
         return
     }
-    if (e.key.match(/^[a-z]$/)) {
+    if (e.key.match(/^[a-z]$/) || e.key.match(/^[A-Z]$/)) {
         pressKey(e.key.toLowerCase())
         return
     }
