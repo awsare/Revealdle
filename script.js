@@ -140,7 +140,8 @@ function newWord() {
 		key.className = "key"
 	});
 
-	targetWord = targetWords[Math.floor(Math.random() * (targetWords.length + 2))]
+	//targetWord = targetWords[Math.floor(Math.random() * (targetWords.length + 2))]
+	targetWord = "tread"
 	console.log('targetWord: "' + targetWord.toUpperCase() + '"')
 
 	const alerts = alertContainer.querySelectorAll(".alert")
@@ -300,27 +301,31 @@ function flipTile(tile, index, array, guess) {
 			if (!key.classList.contains("revealed")) {
 				key.classList.add("hidden")
 			}
+
+			if (targetWord[index] === letter) {
+		        tile.dataset.state = "correct"
+				tile.classList.add("correct")
+				if (key.classList.contains("wrong-location") && !key.classList.contains("correct")) {
+					key.classList.add("needs-update")
+				} else {
+					key.classList.add("correct")
+					key.classList.remove("wrong-location")
+				}
+	      	} else if (targetWord.includes(letter)) {
+		        tile.dataset.state = "wrong-location"
+				tile.classList.add("wrong-location")
+		        key.classList.add("wrong-location")
+	      	} else {
+		        tile.dataset.state = "wrong"
+				tile.classList.add("wrong")
+		        key.classList.add("wrong")
+		    }
+		} else {
+			tile.dataset.state = "correct"
+			key.className = "key correct"
 		}
 	  
-      if (targetWord[index] === letter) {
-        tile.dataset.state = "correct"
-		tile.classList.add("correct")
-		if (key.classList.contains("wrong-location") && !key.classList.contains("correct")) {
-			key.classList.add("needs-update")
-		} else {
-			key.classList.add("correct")
-			key.classList.remove("wrong-location")
-		}
-        
-      } else if (targetWord.includes(letter)) {
-        tile.dataset.state = "wrong-location"
-		tile.classList.add("wrong-location")
-        key.classList.add("wrong-location")
-      } else {
-        tile.dataset.state = "wrong"
-		tile.classList.add("wrong")
-        key.classList.add("wrong")
-      }
+	    
 
       if (index === array.length - 1) {
         tile.addEventListener(
