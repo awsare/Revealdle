@@ -13,7 +13,7 @@
 }
 
 .title {
-	font-size: 3em;
+	font-size: 2.5em;
     font-weight: bold;
     display: flex;
     justify-content: center;
@@ -34,7 +34,7 @@ body {
     flex-direction: column;
     min-height: 90vh;
     margin: 0;
-    padding: 2em;
+    padding: 1em;
     font-size: clamp(.5rem, 2.5vmin, 1rem);
 }
 
@@ -124,10 +124,10 @@ svg {
     justify-content: center;
     align-content: center;
     flex-grow: 1;
-    grid-template-columns: repeat(5, 4em);
-    grid-template-rows: repeat(8, 4em);
+    grid-template-columns: repeat(5, 3.75em);
+    grid-template-rows: repeat(8, 3.75em);
     gap: .25em;
-    margin-bottom: 1.5em;
+    margin-bottom: 2em;
 	width: 100%;
 }
 
