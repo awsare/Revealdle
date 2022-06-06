@@ -140,8 +140,7 @@ function newWord() {
 		key.className = "key"
 	});
 
-	//targetWord = targetWords[Math.floor(Math.random() * (targetWords.length + 2))]
-	targetWord = "tread"
+	targetWord = targetWords[Math.floor(Math.random() * (targetWords.length + 2))]
 	console.log('targetWord: "' + targetWord.toUpperCase() + '"')
 
 	const alerts = alertContainer.querySelectorAll(".alert")
