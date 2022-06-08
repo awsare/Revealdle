@@ -95,7 +95,6 @@ function handleMouseClick(e) {
 }
 
 function handleKeyPress(e) {
-	console.log(e.key)
 	focus()
 	if (hasWon) {
 		return
