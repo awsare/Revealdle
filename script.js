@@ -313,6 +313,9 @@ function flipTile(tile, index, array, guess) {
 		        tile.dataset.state = "wrong-location"
 				tile.classList.add("wrong-location")
 		        key.classList.add("wrong-location")
+				if (key.classList.contains("hidden") && key.classList.contains("correct")) {
+					key.classList.remove("correct")
+				}
 	      	} else {
 		        tile.dataset.state = "wrong"
 				tile.classList.add("wrong")
