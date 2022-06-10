@@ -114,7 +114,11 @@ function handleKeyPress(e) {
 }
 
 function focus() {
-	document.querySelector(".tile").focus();
+	let item = document.querySelector(".tile:not([data-letter])")
+  	if (!item) {
+		item = document.querySelector('[data-state="active"]')
+	}
+	item.focus()
 }
 
 function newWord() {
@@ -161,6 +165,8 @@ function stateCheck(others, mine, key) {
 	let revTiles = []
 	let bonds = [false, false, false , false , false]
 
+	
+
 	//get revealed tiles
 	others.forEach((tile) => {
 		if (!tile.classList.contains("hidden")) {
@@ -175,6 +181,8 @@ function stateCheck(others, mine, key) {
 			key.classList.add("correct")
 		}
 	});
+
+	mine.dataset.color = "correct"
 
 	//then bond the wrong-location tiles
 	
