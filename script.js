@@ -60,7 +60,7 @@ function handleMouseClick(e) {
 
 	if (e.target.classList.contains("hidden") && reveals < MAX_REVEALS && !e.target.classList.contains("old")) {
 		reveals++
-		const letter = e.target.textContent
+		const letter = e.target.dataset.letter
   		const key = keyboard.querySelector(`[data-key="${letter}"i]`)
 
 		stopInteraction()
@@ -73,7 +73,6 @@ function handleMouseClick(e) {
 				e.target.classList.remove("hidden")
 				key.classList.remove("needs-update")
 				key.classList.remove("hidden")
-				key.classList.add("revealed")
 
 				const others = guessGrid.querySelectorAll(`[data-letter="${letter}"i]:not(.old)`)
 
@@ -116,7 +115,7 @@ function handleKeyPress(e) {
 function focus() {
 	let item = document.querySelector(".tile:not([data-letter])")
   	if (!item) {
-		item = document.querySelector('[data-state="active"]')
+		item = document.querySelector(".active")
 	}
 	item.focus()
 }
@@ -134,12 +133,14 @@ function newWord() {
 		tile.textContent = ""
     	delete tile.dataset.state
     	delete tile.dataset.letter
+		delete tile.dataset.color
 		tile.className = "tile"
 	});
 
 	const keys = keyboard.querySelectorAll(".key:not(.large)")
 
 	keys.forEach((key) => {
+		delete key.dataset.color
 		key.className = "key"
 	});
 
@@ -161,11 +162,30 @@ function newWord() {
 	startInteraction()
 }
 
+
 function stateCheck(others, mine, key) {
 	let revTiles = []
 	let bonds = [false, false, false , false , false]
+	const letter = mine.dataset.letter
 
-	
+	// console.log(getIndex(mine))
+		
+	if (targetWord[mine.dataset.index] === letter) {
+		mine.dataset.color = "correct"
+		key.dataset.color = "correct"
+	} else if (targetWord.includes(letter)) {
+		mine.dataset.color = "wrong-location"
+		//make sure to not override correct
+		if (key.dataset.color !== "correct") {
+			key.dataset.color = "wrong-location"
+		}
+	} else {
+		mine.dataset.color = "wrong"
+		//make sure to not override another color
+		if (!key.dataset.color) {
+			key.dataset.color = "wrong"
+		}
+	}
 
 	//get revealed tiles
 	others.forEach((tile) => {
@@ -176,22 +196,18 @@ function stateCheck(others, mine, key) {
 	
 	//bond the correct tiles first
 	revTiles.forEach((tile) => {
-		if (tile.classList.contains("correct")) {
-			bonds[tile.dataset.index - 1] = true
-			key.classList.add("correct")
+		if (targetWord[tile.dataset.index] === tile.dataset.letter) {
+			bonds[tile.dataset.index] = true
 		}
 	});
 
-	mine.dataset.color = "correct"
-
 	//then bond the wrong-location tiles
-	
 	revTiles.forEach((tile) => {
-		if (tile.classList.contains("wrong-location")) {
+		if (targetWord.includes(tile.dataset.letter) && targetWord[tile.dataset.index] !== tile.dataset.letter) {
 			let hasBonded = false
 			
 			for (var u = 0; u < targetWord.length; u++) {
-   				if (bonds[u] === false && targetWord[u] === tile.textContent) {
+   				if (bonds[u] === false && targetWord[u] === tile.dataset.letter) {
 					bonds[u] = true
 					hasBonded = true
 					u = 99
@@ -206,24 +222,25 @@ function stateCheck(others, mine, key) {
 						"transitionend",
 						() => {
 							tile.classList.remove("flip")
-							
-							tile.classList.remove("wrong-location")
-							tile.classList.add("wrong")
-							tile.dataset.state = "wrong"
-							key.classList.add("wrong-location")
-						},
-					{ once: true }
-					) 
+							tile.dataset.color = "wrong"
+						},{ once: true }) 
 				} else {
-					tile.classList.remove("wrong-location")
-					tile.classList.add("wrong")
-					tile.dataset.state = "wrong"
+					tile.dataset.color = "wrong"
 				}
 			}
 		}
 	});
-
 }
+
+// function getIndex(tile) {
+// 	const tiles = guessGrid.querySelectorAll(".tile")
+
+// 	tiles.forEach((iTile) => {
+// 		if (tile.isSameNode(iTile)) {
+// 	 		return 0
+// 		}
+// 	});
+// }
 
 function pressKey(key) {
     const activeTiles = getActiveTiles()
@@ -231,17 +248,13 @@ function pressKey(key) {
     const nextTile = guessGrid.querySelector(":not([data-letter])")
     nextTile.dataset.letter = key.toLowerCase()
     nextTile.textContent = key.toLowerCase()
-    nextTile.dataset.state = "active"
+    nextTile.classList.add("active")
 	
     nextTile.classList.add("enter")
 
-	nextTile.addEventListener(
-		"animationend",
-		() => {
-      		nextTile.classList.remove("enter")
-		},
-		{ once: true }
-	) 
+	nextTile.addEventListener("animationend",() => {
+      	nextTile.classList.remove("enter")
+	},{ once: true }) 
 }
 
 function deleteKey() {
@@ -249,7 +262,7 @@ function deleteKey() {
     const lastTile = activeTiles[activeTiles.length - 1]
     if (lastTile == null) return
     lastTile.textContent = ""
-    delete lastTile.dataset.state
+	lastTile.classList.remove("active")
     delete lastTile.dataset.letter
 }
 
@@ -277,6 +290,7 @@ function submitGuess() {
 	
 	guesses++
 	reveals = 0
+
 	
 	let olds = guessGrid.querySelectorAll(`[data-letter]:not([data-row="${guesses}"i])`)
 	if (olds !== null) {
@@ -290,69 +304,35 @@ function submitGuess() {
 }
 
 function flipTile(tile, index, array, guess) {
-  const letter = tile.dataset.letter
-  const key = keyboard.querySelector(`[data-key="${letter}"i]`)
-  setTimeout(() => {
-    tile.classList.add("flip")
-  }, ((Math.pow(1.35, index) - 0.35)* FLIP_ANIMATION_DURATION) / 2)
-
+  	const letter = tile.dataset.letter
+  	const key = keyboard.querySelector(`[data-key="${letter}"i]`)
 	
-  tile.addEventListener(
-    "transitionend",
-    () => {
-      tile.classList.remove("flip")
-		
-		if (targetWord !== guess) {
-			tile.classList.add("hidden")
-			if (!key.classList.contains("revealed")) {
-				key.classList.add("hidden")
-			}
+  	setTimeout(() => {
+    	tile.classList.add("flip")
+  	}, ((Math.pow(1.35, index) - 0.35)* FLIP_ANIMATION_DURATION) / 2)
+	
+  	tile.addEventListener("transitionend", () => {
+      	tile.classList.remove("flip")
+		tile.classList.remove("active")
 
-			if (targetWord[index] === letter) {
-		        tile.dataset.state = "correct"
-				tile.classList.add("correct")
-				if (key.classList.contains("wrong-location") && !key.classList.contains("correct")) {
-					key.classList.add("needs-update")
-				} else {
-					key.classList.add("correct")
-					key.classList.remove("wrong-location")
-				}
-	      	} else if (targetWord.includes(letter)) {
-		        tile.dataset.state = "wrong-location"
-				tile.classList.add("wrong-location")
-		        key.classList.add("wrong-location")
-				if (key.classList.contains("hidden") && key.classList.contains("correct")) {
-					key.classList.remove("correct")
-				}
-	      	} else {
-		        tile.dataset.state = "wrong"
-				tile.classList.add("wrong")
-		        key.classList.add("wrong")
-		    }
+		if (guess === targetWord) {
+			tile.dataset.color = "correct"
+			key.dataset.color = "correct"
 		} else {
-			tile.dataset.state = "correct"
-			key.className = "key correct"
+			tile.classList.add("hidden")
 		}
-	  
-	    
-
-      if (index === array.length - 1) {
-        tile.addEventListener(
-          "transitionend",
-          () => {
-            startInteraction()
-            checkWinLose(guess, array)
-          },
-          { once: true }
-        )
-      }
-    },
-    { once: true }
-  )
+		
+		if (index === array.length - 1) {
+			tile.addEventListener("transitionend", () => {
+				startInteraction()
+				checkWinLose(guess, array)
+			}, { once: true })
+		}
+    }, { once: true })
 }
 
 function getActiveTiles() {
-    return guessGrid.querySelectorAll('[data-state="active"]')
+    return guessGrid.querySelectorAll(".active")
 }
 
 function showAlert(message, duration = 1000) {

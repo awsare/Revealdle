@@ -86,26 +86,20 @@ svg {
     pointer-events: none;
 }
 
-.key.wrong {
+.key[data-color="wrong"] {
     --lightness : 23%;
 }
 
-.key.wrong-location {
+.key[data-color="wrong-location"] {
     --hue: 49;
     --saturation: 51%;
     --lightness: 47%;
 }
 
-.key.correct {
+.key[data-color="correct"] {
     --hue: 115;
     --saturation: 29%;
     --lightness: 43%;
-}
-
-.key.needs-update {
-	--hue: 49;
-    --saturation: 51%;
-    --lightness: 47%;
 }
 
 .key.hidden {
@@ -234,21 +228,21 @@ svg {
   }
 }
 
-.tile[data-state="active"] {
+.tile[data-color="active"] {
     border-color: hsl(200, 1%, 50%)
 }
 
-.tile[data-state="wrong"] {
+.tile[data-color="wrong"] {
     border: none;
     background-color: hsl(240, 2%, 23%)
 }
 
-.tile[data-state="wrong-location"] {
+.tile[data-color="wrong-location"] {
     border: none;
     background-color: hsl(49, 51%, 47%)
 }
 
-.tile[data-state="correct"] {
+.tile[data-color="correct"] {
     border: none;
     background-color: hsl(115, 29%, 43%)
 }
