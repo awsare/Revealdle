@@ -30,11 +30,15 @@
 
 body {
     background-color: hsl(240, 3%, 7%);
-    display: flex;
+	display: flex;
     flex-direction: column;
-    min-height: 90vh;
-    margin: 0;
-    padding: 1em;
+	justify-content: center;
+	padding-top: 1em;
+	padding-bottom: 1em;
+}
+
+.content-container {
+	background-color: hsl(240, 3%, 7%);
     font-size: clamp(.5rem, 2.5vmin, 1rem);
 }
 
@@ -254,7 +258,6 @@ svg {
 
 .alert-container {
 	position: fixed;
-	top: 10vh;
 	left: 50vw;
 	transform: translateX(-50%);
 	z-index: 1;
