@@ -1,22 +1,22 @@
-const compliments = ["Cheater","Lucky","Genius","Brilliant", "Clever","Great","Close one","Phew"]
+const compliments = ["Cheater","Lucky","Genius","Brilliant","Clever","Great","Close one","Phew"]
+const themes = ["default", "colorblind"]
 const keyboard = document.querySelector("[data-keyboard]")
 const alertContainer = document.querySelector("[data-alert-container]")
 const guessGrid = document.querySelector("[data-guess-grid]")
+const body = document.querySelector("body")
 const WORD_LENGTH = 5
 const FLIP_ANIMATION_DURATION = 500
 const DANCE_ANIMATION_DURATION = 500
 const MAX_ALERTS = 3
 const MAX_REVEALS = 3
+
 const offsetFromDate = new Date(2022, 4, 6)
 const msOffset = Date.now() - offsetFromDate
 const dayOffset = Math.floor(msOffset / 1000 / 60 / 60 / 24)
-
 let targetWord = targetWords[dayOffset]
 
-let guesses = 0
 let reveals = 0
-
-let hasWon = false
+let hasEnded = false
 
 startInteraction()
 showAlert("Daily word generated")
@@ -35,12 +35,17 @@ function stopInteraction() {
 function handleMouseClick(e) {
 	focus()
 	
-	if(e.target.matches("[data-title]")) {
+	if(e.target.matches(".new-word") || e.target.matches(".title")) {
 		newWord()
 		return
 	}
 
-	if (hasWon) {
+	if (e.target.matches(".theme-swapper")) {
+		swapTheme()
+		return
+	}
+
+	if (hasEnded) {
 		return
 	}
 	
@@ -48,84 +53,94 @@ function handleMouseClick(e) {
         pressKey(e.target.dataset.key)
         return
     }
+	
     if (e.target.matches("[data-enter]")) {
         submitGuess()
         return
     }
+	
     if (e.target.matches("[data-delete]")) {
         deleteKey()
         return
     }
-	
 
 	if (e.target.classList.contains("hidden") && reveals < MAX_REVEALS && !e.target.classList.contains("old")) {
-		reveals++
+		stopInteraction()
+		
 		const letter = e.target.dataset.letter
   		const key = keyboard.querySelector(`[data-key="${letter}"i]`)
+		reveals++
 
-		stopInteraction()
     	e.target.classList.add("flip")
 
-		e.target.addEventListener(
-			"transitionend",
-			() => {
-      			e.target.classList.remove("flip")
-				e.target.classList.remove("hidden")
-				key.classList.remove("needs-update")
-				key.classList.remove("hidden")
+		e.target.addEventListener("transitionend", () => {
+      		e.target.classList.remove("flip")
+			e.target.classList.remove("hidden")
+			key.classList.remove("hidden")
 
-				const others = guessGrid.querySelectorAll(`[data-letter="${letter}"i]:not(.old)`)
+			const others = guessGrid.querySelectorAll(`[data-letter="${letter}"i]:not(.old)`)
 
-				stateCheck(others, e.target, key)
+			stateCheck(others, e.target, key)
 
-				
-			},
-			{ once: true }
-		)
+		}, { once: true })
 
-		e.target.addEventListener(
-			"transitionend",
-			() => {
-				startInteraction()
-			},
-			{ once: true }
-		)
+		e.target.addEventListener("transitionend", () => {
+			startInteraction()
+		}, { once: true })
 	}
 }
 
 function handleKeyPress(e) {
 	focus()
-	if (hasWon) {
+
+	if (e.key.match(/^\d+$/)) {
+		swapTheme(e.key)
+	}
+	
+	if (hasEnded) {
 		return
 	}
+	
     if (e.key === "Enter") {
         submitGuess()
         return
     }
+	
     if (e.key === "Backspace" || e.key === "Delete") {
         deleteKey()
         return
     }
+	
     if (e.key.match(/^[a-z]$/) || e.key.match(/^[A-Z]$/)) {
         pressKey(e.key.toLowerCase())
         return
     }
 }
 
+function swapTheme(num) {
+	if (!(num > themes.length)) {
+		body.className = themes[num - 1]
+		showAlert("Theme switched")
+	}
+}
+
 function focus() {
+	if (hasEnded) {return}
+	
 	let item = document.querySelector(".tile:not([data-letter])")
+	
   	if (!item) {
 		item = document.querySelector(".active")
 	}
+	
 	item.focus()
 }
 
 function newWord() {
 	stopInteraction()
 
-	guesses = 0
 	reveals = 0
-	hasWon = false
+	hasEnded = false
 	
 	const tiles = guessGrid.querySelectorAll('[data-letter]')
 
@@ -167,41 +182,36 @@ function stateCheck(others, mine, key) {
 	let revTiles = []
 	let bonds = [false, false, false , false , false]
 	const letter = mine.dataset.letter
-
-	// console.log(getIndex(mine))
 		
 	if (targetWord[mine.dataset.index] === letter) {
 		mine.dataset.color = "correct"
 		key.dataset.color = "correct"
 	} else if (targetWord.includes(letter)) {
 		mine.dataset.color = "wrong-location"
-		//make sure to not override correct
+
 		if (key.dataset.color !== "correct") {
 			key.dataset.color = "wrong-location"
 		}
 	} else {
 		mine.dataset.color = "wrong"
-		//make sure to not override another color
+
 		if (!key.dataset.color) {
 			key.dataset.color = "wrong"
 		}
 	}
 
-	//get revealed tiles
 	others.forEach((tile) => {
 		if (!tile.classList.contains("hidden")) {
 			revTiles.push(tile)
 		}
 	});
 	
-	//bond the correct tiles first
 	revTiles.forEach((tile) => {
 		if (targetWord[tile.dataset.index] === tile.dataset.letter) {
 			bonds[tile.dataset.index] = true
 		}
 	});
 
-	//then bond the wrong-location tiles
 	revTiles.forEach((tile) => {
 		if (targetWord.includes(tile.dataset.letter) && targetWord[tile.dataset.index] !== tile.dataset.letter) {
 			let hasBonded = false
@@ -214,16 +224,14 @@ function stateCheck(others, mine, key) {
 				}
  			}
 
-			if (hasBonded === false) {
+			if (hasBonded === false && tile.dataset.color !== "wrong") {
 				if (tile !== mine) {
 					tile.classList.add("flip")
 
-					tile.addEventListener(
-						"transitionend",
-						() => {
-							tile.classList.remove("flip")
-							tile.dataset.color = "wrong"
-						},{ once: true }) 
+					tile.addEventListener("transitionend", () => {
+						tile.classList.remove("flip")
+						tile.dataset.color = "wrong"
+					}, { once: true }) 
 				} else {
 					tile.dataset.color = "wrong"
 				}
@@ -232,24 +240,16 @@ function stateCheck(others, mine, key) {
 	});
 }
 
-// function getIndex(tile) {
-// 	const tiles = guessGrid.querySelectorAll(".tile")
-
-// 	tiles.forEach((iTile) => {
-// 		if (tile.isSameNode(iTile)) {
-// 	 		return 0
-// 		}
-// 	});
-// }
-
 function pressKey(key) {
     const activeTiles = getActiveTiles()
+	
     if (activeTiles.length >= WORD_LENGTH) return
+	
     const nextTile = guessGrid.querySelector(":not([data-letter])")
+	
     nextTile.dataset.letter = key.toLowerCase()
     nextTile.textContent = key.toLowerCase()
     nextTile.classList.add("active")
-	
     nextTile.classList.add("enter")
 
 	nextTile.addEventListener("animationend",() => {
@@ -260,7 +260,9 @@ function pressKey(key) {
 function deleteKey() {
     const activeTiles = getActiveTiles()
     const lastTile = activeTiles[activeTiles.length - 1]
+	
     if (lastTile == null) return
+	
     lastTile.textContent = ""
 	lastTile.classList.remove("active")
     delete lastTile.dataset.letter
@@ -268,7 +270,6 @@ function deleteKey() {
 
 function submitGuess() {
     const activeTiles = [...getActiveTiles()]
-	
 	
     if (activeTiles.length !== WORD_LENGTH) {
         showAlert("Not enough letters")
@@ -288,11 +289,10 @@ function submitGuess() {
 
 	stopInteraction()
 	
-	guesses++
 	reveals = 0
 
 	
-	let olds = guessGrid.querySelectorAll(`[data-letter]:not([data-row="${guesses}"i])`)
+	let olds = guessGrid.querySelectorAll(`[data-letter]:not([data-row="${getGuesses()}"i])`)
 	if (olds !== null) {
 		olds.forEach((tile) => {
 			tile.classList.add("old")
@@ -300,7 +300,6 @@ function submitGuess() {
 	}
 	
 	activeTiles.forEach((...params) => flipTile(...params, guess))
-	
 }
 
 function flipTile(tile, index, array, guess) {
@@ -326,7 +325,7 @@ function flipTile(tile, index, array, guess) {
 			tile.addEventListener("transitionend", () => {
 				startInteraction()
 				checkWinLose(guess, array)
-			}, { once: true })
+			},{ once: true })
 		}
     }, { once: true })
 }
@@ -335,8 +334,14 @@ function getActiveTiles() {
     return guessGrid.querySelectorAll(".active")
 }
 
+function getGuesses() {
+	const letters = guessGrid.querySelectorAll("[data-letter]")
+	return Math.floor(((letters.length - WORD_LENGTH) / WORD_LENGTH) + 1)
+}
+
 function showAlert(message, duration = 1000) {
 	if (alertContainer.children.length >= MAX_ALERTS) return 
+	
 	const alert = document.createElement("div")
 	alert.textContent = message;
 	alert.classList.add("alert")
@@ -362,30 +367,26 @@ function shakeTiles(tiles) {
 
 function checkWinLose(guess, tiles) {
 	if (guess === targetWord) {
-		showAlert(compliments[guesses - 1], 5000)
+		showAlert(compliments[getGuesses() - 1], 5000)
 		danceTiles(tiles)
-		hasWon = true
+		hasEnded = true
 		return
 	}
 
 	const remainingTiles = guessGrid.querySelectorAll(":not([data-letter])")
 	if (remainingTiles.length === 0) {
 		showAlert(targetWord.toUpperCase(), null)
-		hasWon = true
+		hasEnded = true
 	}
 }
 
 function danceTiles(tiles) {
-  tiles.forEach((tile, index) => {
-    setTimeout(() => {
-      tile.classList.add("dance")
-      tile.addEventListener(
-        "animationend",
-        () => {
-          tile.classList.remove("dance")
-        },
-        { once: true }
-      )
-    }, (index * DANCE_ANIMATION_DURATION) / 5)
-  })
+  	tiles.forEach((tile, index) => {
+	    setTimeout(() => {
+	      	tile.classList.add("dance")
+	      	tile.addEventListener("animationend", () => {
+	          	tile.classList.remove("dance")
+	        }, { once: true })
+	    }, (index * DANCE_ANIMATION_DURATION) / 5)
+	})
 }

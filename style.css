@@ -6,10 +6,36 @@
 	touch-action: manipulation;
 }
 
+:root {
+	--bg: hsl(240, 3%, 7%);
+	--title: white;
+	--text: white;
+	--border: hsl(240, 2%, 23%);
+	--alert: hsl(204, 7%, 85%);
+	--active: hsl(200, 1%, 50%);
+	--wrong: hsl(240, 2%, 23%);
+	--hue: 240;
+	--saturation: 3%;
+	--lightness-offset: 0%;
+	--lightness: 51%;
+}
+
+.default {
+	--correct: hsl(115, 29%, 43%);
+	--wrong-location: hsl(49, 51%, 47%);
+}
+
+.colorblind {
+	--correct: hsl(20, 90%, 59%);
+	--wrong-location: hsl(209, 91%, 75%);
+}
+
+
 .title-container {
 	display: flex;
     justify-content: center;
     align-items: center;
+	flex-direction: row;
 }
 
 .title {
@@ -18,7 +44,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-	color: white;
+	color: var(--title);
 	background-color: transparent;
 	border: transparent;
 }
@@ -29,7 +55,7 @@
 }
 
 body {
-    background-color: hsl(240, 3%, 7%);
+    background-color: var(--bg);
 	display: flex;
     flex-direction: column;
 	justify-content: center;
@@ -38,7 +64,7 @@ body {
 }
 
 .content-container {
-	background-color: hsl(240, 3%, 7%);
+	background-color: var(--bg);
     font-size: clamp(.5rem, 2.5vmin, 1rem);
 }
 
@@ -59,12 +85,11 @@ body {
     justify-content: center;
     align-items: center;
     background-color: hsl(
-        var(--hue, 240),
-        var(--saturation, 3%),
-        calc(var(--lightness-offset, 0%) + var(--lightness, 51%))
+        var(--hue), var(--saturation),
+        calc(var(--lightness-offset) + var(--lightness))
     );
-    color: white;
-    fill: white;
+    color: var(--text);
+    fill: var(--text);
     text-transform: uppercase;
     border-radius: .25em;
     cursor: pointer;
@@ -106,12 +131,6 @@ svg {
     --lightness: 43%;
 }
 
-.key.hidden {
-	--hue: 240;
-	--saturation: 3%;
-	--lightness: 51%;
-}
-
 .key:focus {
   outline: none;
   box-shadow: none;
@@ -132,9 +151,9 @@ svg {
 .tile {
     border-radius: .25em;
     transform: scale(1.0);
-    color: white;
+    color: var(--text);
 	background-color: transparent;
-    border: 0.05em solid hsl(240, 2%, 23%);
+    border: 0.05em solid var(--border);
 	font-size: 2em;
     text-transform: uppercase;
     font-weight: bold;
@@ -232,28 +251,23 @@ svg {
   }
 }
 
-.tile[data-color="active"] {
-    border-color: hsl(200, 1%, 50%)
+.tile.active {
+    border-color: var(--active)
 }
 
 .tile[data-color="wrong"] {
     border: none;
-    background-color: hsl(240, 2%, 23%)
+    background-color: var(--wrong)
 }
 
 .tile[data-color="wrong-location"] {
     border: none;
-    background-color: hsl(49, 51%, 47%)
+    background-color: var(--wrong-location)
 }
 
 .tile[data-color="correct"] {
     border: none;
-    background-color: hsl(115, 29%, 43%)
-}
-
-.tile.hidden {
-	border: 0.05em solid hsl(240, 2%, 23%);
-	background-color: hsl(240, 3%, 7%);
+    background-color: var(--correct)
 }
 
 .alert-container {
@@ -269,7 +283,7 @@ svg {
 .alert {
 	pointer-events: none;
 	user-select: none;
-	background-color: hsl(204, 7%, 85%);
+	background-color: var(--alert);
 	padding: .75em;
 	border-radius: .25em;
 	opacity: 1;
