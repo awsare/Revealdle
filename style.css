@@ -14,10 +14,6 @@
 	--alert: hsl(204, 7%, 85%);
 	--active: hsl(200, 1%, 50%);
 	--wrong: hsl(240, 2%, 23%);
-	--hue: 240;
-	--saturation: 3%;
-	--lightness-offset: 0%;
-	--lightness: 51%;
 }
 
 .default {
@@ -30,6 +26,30 @@
 	--wrong-location: hsl(209, 91%, 75%);
 }
 
+.three {
+	--correct: hsl(340, 70%, 52%);
+	--wrong-location: hsl(49, 90%, 62%)
+}
+
+.four {
+	--correct: hsl(148, 54%, 60%);
+	--wrong-location: hsl(314, 38%, 80%)
+}
+
+.five {
+	--correct: hsl(71, 27%, 49%);
+	--wrong-location: hsl(24, 83%, 45%)
+}
+
+.six {
+	--correct: hsl(104, 16%, 73%);
+	--wrong-location: hsl(180, 5%, 65%)
+}
+
+.seven {
+	--correct: hsl(276, 20%, 61%);
+	--wrong-location: hsl(199, 70%, 82%)
+}
 
 .title-container {
 	display: flex;
@@ -84,10 +104,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: hsl(
-        var(--hue), var(--saturation),
-        calc(var(--lightness-offset) + var(--lightness))
-    );
+    background-color: hsl(240, 3%, 51%);
     color: var(--text);
     fill: var(--text);
     text-transform: uppercase;
@@ -116,19 +133,15 @@ svg {
 }
 
 .key[data-color="wrong"] {
-    --lightness : 23%;
+    background-color: var(--wrong)
 }
 
 .key[data-color="wrong-location"] {
-    --hue: 49;
-    --saturation: 51%;
-    --lightness: 47%;
+    background-color: var(--wrong-location)
 }
 
 .key[data-color="correct"] {
-    --hue: 115;
-    --saturation: 29%;
-    --lightness: 43%;
+    background-color: var(--correct)
 }
 
 .key:focus {

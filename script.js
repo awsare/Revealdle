@@ -1,5 +1,5 @@
 const compliments = ["Cheater","Lucky","Genius","Brilliant","Clever","Great","Close one","Phew"]
-const themes = ["default", "colorblind"]
+const themes = ["default", "colorblind", "three", "four", "five", "six", "seven", "eight", "nine", "zero"]
 const keyboard = document.querySelector("[data-keyboard]")
 const alertContainer = document.querySelector("[data-alert-container]")
 const guessGrid = document.querySelector("[data-guess-grid]")
@@ -98,6 +98,11 @@ function handleKeyPress(e) {
 	}
 	
 	if (hasEnded) {
+		return
+	}
+
+	if (e.key === "w") {
+		console.log(getGuesses())
 		return
 	}
 	
@@ -292,13 +297,6 @@ function submitGuess() {
 	reveals = 0
 
 	
-	let olds = guessGrid.querySelectorAll(`[data-letter]:not([data-row="${getGuesses()}"i])`)
-	if (olds !== null) {
-		olds.forEach((tile) => {
-			tile.classList.add("old")
-		});
-	}
-	
 	activeTiles.forEach((...params) => flipTile(...params, guess))
 }
 
@@ -324,6 +322,14 @@ function flipTile(tile, index, array, guess) {
 		if (index === array.length - 1) {
 			tile.addEventListener("transitionend", () => {
 				startInteraction()
+
+				let olds = guessGrid.querySelectorAll(`[data-letter]:not([data-row="${getGuesses()}"i])`)
+				if (olds !== null) {
+					olds.forEach((tile) => {
+						tile.classList.add("old")
+					});
+				}
+				
 				checkWinLose(guess, array)
 			},{ once: true })
 		}
@@ -335,7 +341,7 @@ function getActiveTiles() {
 }
 
 function getGuesses() {
-	const letters = guessGrid.querySelectorAll("[data-letter]")
+	const letters = guessGrid.querySelectorAll("[data-letter]:not(.active)")
 	return Math.floor(((letters.length - WORD_LENGTH) / WORD_LENGTH) + 1)
 }
 
