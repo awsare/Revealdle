@@ -4,6 +4,8 @@
     box-sizing: border-box;
     font-family: 'Poppins', sans-serif;
 	touch-action: manipulation;
+	outline: none;
+  	box-shadow: none;
 }
 
 :root {
@@ -60,18 +62,13 @@
 
 .title {
 	font-size: 2.5em;
-    font-weight: bold;
+	font-weight: bold;
     display: flex;
     justify-content: center;
     align-items: center;
 	color: var(--title);
 	background-color: transparent;
 	border: transparent;
-}
-
-.title:focus {
-  outline: none;
-  box-shadow: none;
 }
 
 body {
@@ -118,6 +115,10 @@ body {
     grid-column: span 3;
 }
 
+.key.long {
+	grid-column: span 6;
+}
+
 .key > svg {
     width: 1.5em;
     height: 1.5em;
@@ -142,11 +143,6 @@ svg {
 
 .key[data-color="correct"] {
     background-color: var(--correct)
-}
-
-.key:focus {
-  outline: none;
-  box-shadow: none;
 }
 
 .guess-grid {
@@ -175,11 +171,6 @@ svg {
     align-items: center;
     user-select: none;
 	transition: transform 250ms linear;
-}
-
-.tile:focus {
-  outline: none;
-  box-shadow: none;
 }
 
 .tile.shake {

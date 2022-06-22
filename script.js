@@ -1,5 +1,5 @@
 const compliments = ["Cheater","Lucky","Genius","Brilliant","Clever","Great","Close one","Phew"]
-const themes = ["default", "colorblind", "three", "four", "five", "six", "seven", "eight", "nine", "zero"]
+const themes = ["default", "colorblind", "three", "four", "five", "six", "seven"]
 const keyboard = document.querySelector("[data-keyboard]")
 const alertContainer = document.querySelector("[data-alert-container]")
 const guessGrid = document.querySelector("[data-guess-grid]")
@@ -35,12 +35,12 @@ function stopInteraction() {
 function handleMouseClick(e) {
 	focus()
 	
-	if(e.target.matches(".new-word") || e.target.matches(".title")) {
+	if(e.target.matches("[data-newword]")) {
 		newWord()
 		return
 	}
 
-	if (e.target.matches(".theme-swapper")) {
+	if (e.target.matches("[data-themeswapper]")) {
 		swapTheme()
 		return
 	}
@@ -92,10 +92,6 @@ function handleMouseClick(e) {
 
 function handleKeyPress(e) {
 	focus()
-
-	if (e.key.match(/^\d+$/)) {
-		swapTheme(e.key)
-	}
 	
 	if (hasEnded) {
 		return
@@ -120,12 +116,24 @@ function handleKeyPress(e) {
         pressKey(e.key.toLowerCase())
         return
     }
+
+	if (e.key === "?") {
+		pressKey("?")
+	}
 }
 
-function swapTheme(num) {
-	if (!(num > themes.length)) {
-		body.className = themes[num - 1]
-		showAlert("Theme switched")
+function swapTheme() {
+	for (var u = 0; u < themes.length; u++) {
+		if (themes[u] === body.className) {
+			if (u + 2 > themes.length) {
+				body.className = themes[0]
+			}
+			else {
+				body.className = themes[u + 1]
+				showAlert("Theme switched")
+				break
+			}
+		}
 	}
 }
 
@@ -157,7 +165,7 @@ function newWord() {
 		tile.className = "tile"
 	});
 
-	const keys = keyboard.querySelectorAll(".key:not(.large)")
+	const keys = keyboard.querySelectorAll(".key:not(.large):not(.long)")
 
 	keys.forEach((key) => {
 		delete key.dataset.color
@@ -181,7 +189,6 @@ function newWord() {
 	
 	startInteraction()
 }
-
 
 function stateCheck(others, mine, key) {
 	let revTiles = []
@@ -286,6 +293,12 @@ function submitGuess() {
 		return word + tile.dataset.letter
 	}, "")
 
+	if (guess.includes("?")) {
+		showAlert("Remove all fillers")
+		shakeTiles(activeTiles)
+		return
+	}
+
 	if (!dictionary.concat(targetWords).includes(guess)) {
 		showAlert("Word not found")
 		shakeTiles(activeTiles)
@@ -296,7 +309,6 @@ function submitGuess() {
 	
 	reveals = 0
 
-	
 	activeTiles.forEach((...params) => flipTile(...params, guess))
 }
 
