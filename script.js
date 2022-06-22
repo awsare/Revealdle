@@ -96,11 +96,6 @@ function handleKeyPress(e) {
 	if (hasEnded) {
 		return
 	}
-
-	if (e.key === "w") {
-		console.log(getGuesses())
-		return
-	}
 	
     if (e.key === "Enter") {
         submitGuess()
