@@ -1,4 +1,4 @@
-const compliments = ["Cheater","Lucky","Genius","Brilliant","Clever","Great","Close one","Phew"]
+const compliments = ["Cheater", "Lucky", "Genius", "Brilliant", "Clever", "Great", "Close one", "Phew"]
 const themes = ["default", "colorblind", "three", "four", "five", "six", "seven"]
 const keyboard = document.querySelector("[data-keyboard]")
 const alertContainer = document.querySelector("[data-alert-container]")
@@ -23,19 +23,19 @@ showAlert("Daily word generated")
 console.log('targetWord: "' + targetWord.toUpperCase() + '"')
 
 function startInteraction() {
-    document.addEventListener("click", handleMouseClick)
-    document.addEventListener("keydown", handleKeyPress)
+	document.addEventListener("click", handleMouseClick)
+	document.addEventListener("keydown", handleKeyPress)
 }
 
 function stopInteraction() {
-    document.removeEventListener("click", handleMouseClick)
-    document.removeEventListener("keydown", handleKeyPress)
+	document.removeEventListener("click", handleMouseClick)
+	document.removeEventListener("keydown", handleKeyPress)
 }
 
 function handleMouseClick(e) {
 	focus()
-	
-	if(e.target.matches("[data-newword]")) {
+
+	if (e.target.matches("[data-newword]")) {
 		newWord()
 		return
 	}
@@ -48,33 +48,33 @@ function handleMouseClick(e) {
 	if (hasEnded) {
 		return
 	}
-	
-    if (e.target.matches("[data-key]")) {
-        pressKey(e.target.dataset.key)
-        return
-    }
-	
-    if (e.target.matches("[data-enter]")) {
-        submitGuess()
-        return
-    }
-	
-    if (e.target.matches("[data-delete]")) {
-        deleteKey()
-        return
-    }
+
+	if (e.target.matches("[data-key]")) {
+		pressKey(e.target.dataset.key)
+		return
+	}
+
+	if (e.target.matches("[data-enter]")) {
+		submitGuess()
+		return
+	}
+
+	if (e.target.matches("[data-delete]")) {
+		deleteKey()
+		return
+	}
 
 	if (e.target.classList.contains("hidden") && reveals < MAX_REVEALS && !e.target.classList.contains("old")) {
 		stopInteraction()
-		
+
 		const letter = e.target.dataset.letter
-  		const key = keyboard.querySelector(`[data-key="${letter}"i]`)
+		const key = keyboard.querySelector(`[data-key="${letter}"i]`)
 		reveals++
 
-    	e.target.classList.add("flip")
+		e.target.classList.add("flip")
 
 		e.target.addEventListener("transitionend", () => {
-      		e.target.classList.remove("flip")
+			e.target.classList.remove("flip")
 			e.target.classList.remove("hidden")
 			key.classList.remove("hidden")
 
@@ -92,25 +92,25 @@ function handleMouseClick(e) {
 
 function handleKeyPress(e) {
 	focus()
-	
+
 	if (hasEnded) {
 		return
 	}
-	
-    if (e.key === "Enter") {
-        submitGuess()
-        return
-    }
-	
-    if (e.key === "Backspace" || e.key === "Delete") {
-        deleteKey()
-        return
-    }
-	
-    if (e.key.match(/^[a-z]$/) || e.key.match(/^[A-Z]$/)) {
-        pressKey(e.key.toLowerCase())
-        return
-    }
+
+	if (e.key === "Enter") {
+		submitGuess()
+		return
+	}
+
+	if (e.key === "Backspace" || e.key === "Delete") {
+		deleteKey()
+		return
+	}
+
+	if (e.key.match(/^[a-z]$/) || e.key.match(/^[A-Z]$/)) {
+		pressKey(e.key.toLowerCase())
+		return
+	}
 
 	if (e.key === "?") {
 		pressKey("?")
@@ -133,14 +133,14 @@ function swapTheme() {
 }
 
 function focus() {
-	if (hasEnded) {return}
-	
+	if (hasEnded) { return }
+
 	let item = document.querySelector(".tile:not([data-letter])")
-	
-  	if (!item) {
+
+	if (!item) {
 		item = document.querySelector(".active")
 	}
-	
+
 	item.focus()
 }
 
@@ -149,13 +149,13 @@ function newWord() {
 
 	reveals = 0
 	hasEnded = false
-	
+
 	const tiles = guessGrid.querySelectorAll('[data-letter]')
 
 	tiles.forEach((tile) => {
 		tile.textContent = ""
-    	delete tile.dataset.state
-    	delete tile.dataset.letter
+		delete tile.dataset.state
+		delete tile.dataset.letter
 		delete tile.dataset.color
 		tile.className = "tile"
 	});
@@ -181,15 +181,15 @@ function newWord() {
 
 	showAlert("New word generated")
 	focus()
-	
+
 	startInteraction()
 }
 
 function stateCheck(others, mine, key) {
 	let revTiles = []
-	let bonds = [false, false, false , false , false]
+	let bonds = [false, false, false, false, false]
 	const letter = mine.dataset.letter
-		
+
 	if (targetWord[mine.dataset.index] === letter) {
 		mine.dataset.color = "correct"
 		key.dataset.color = "correct"
@@ -212,7 +212,7 @@ function stateCheck(others, mine, key) {
 			revTiles.push(tile)
 		}
 	});
-	
+
 	revTiles.forEach((tile) => {
 		if (targetWord[tile.dataset.index] === tile.dataset.letter) {
 			bonds[tile.dataset.index] = true
@@ -222,14 +222,14 @@ function stateCheck(others, mine, key) {
 	revTiles.forEach((tile) => {
 		if (targetWord.includes(tile.dataset.letter) && targetWord[tile.dataset.index] !== tile.dataset.letter) {
 			let hasBonded = false
-			
+
 			for (var u = 0; u < targetWord.length; u++) {
-   				if (bonds[u] === false && targetWord[u] === tile.dataset.letter) {
+				if (bonds[u] === false && targetWord[u] === tile.dataset.letter) {
 					bonds[u] = true
 					hasBonded = true
 					u = 99
 				}
- 			}
+			}
 
 			if (hasBonded === false && tile.dataset.color !== "wrong") {
 				if (tile !== mine) {
@@ -238,7 +238,7 @@ function stateCheck(others, mine, key) {
 					tile.addEventListener("transitionend", () => {
 						tile.classList.remove("flip")
 						tile.dataset.color = "wrong"
-					}, { once: true }) 
+					}, { once: true })
 				} else {
 					tile.dataset.color = "wrong"
 				}
@@ -248,41 +248,41 @@ function stateCheck(others, mine, key) {
 }
 
 function pressKey(key) {
-    const activeTiles = getActiveTiles()
-	
-    if (activeTiles.length >= WORD_LENGTH) return
-	
-    const nextTile = guessGrid.querySelector(":not([data-letter])")
-	
-    nextTile.dataset.letter = key.toLowerCase()
-    nextTile.textContent = key.toLowerCase()
-    nextTile.classList.add("active")
-    nextTile.classList.add("enter")
+	const activeTiles = getActiveTiles()
 
-	nextTile.addEventListener("animationend",() => {
-      	nextTile.classList.remove("enter")
-	},{ once: true }) 
+	if (activeTiles.length >= WORD_LENGTH) return
+
+	const nextTile = guessGrid.querySelector(":not([data-letter])")
+
+	nextTile.dataset.letter = key.toLowerCase()
+	nextTile.textContent = key.toLowerCase()
+	nextTile.classList.add("active")
+	nextTile.classList.add("enter")
+
+	nextTile.addEventListener("animationend", () => {
+		nextTile.classList.remove("enter")
+	}, { once: true })
 }
 
 function deleteKey() {
-    const activeTiles = getActiveTiles()
-    const lastTile = activeTiles[activeTiles.length - 1]
-	
-    if (lastTile == null) return
-	
-    lastTile.textContent = ""
+	const activeTiles = getActiveTiles()
+	const lastTile = activeTiles[activeTiles.length - 1]
+
+	if (lastTile == null) return
+
+	lastTile.textContent = ""
 	lastTile.classList.remove("active")
-    delete lastTile.dataset.letter
+	delete lastTile.dataset.letter
 }
 
 function submitGuess() {
-    const activeTiles = [...getActiveTiles()]
-	
-    if (activeTiles.length !== WORD_LENGTH) {
-        showAlert("Not enough letters")
-        shakeTiles(activeTiles)
-        return
-    }
+	const activeTiles = [...getActiveTiles()]
+
+	if (activeTiles.length !== WORD_LENGTH) {
+		showAlert("Not enough letters")
+		shakeTiles(activeTiles)
+		return
+	}
 
 	const guess = activeTiles.reduce((word, tile) => {
 		return word + tile.dataset.letter
@@ -301,22 +301,22 @@ function submitGuess() {
 	}
 
 	stopInteraction()
-	
+
 	reveals = 0
 
 	activeTiles.forEach((...params) => flipTile(...params, guess))
 }
 
 function flipTile(tile, index, array, guess) {
-  	const letter = tile.dataset.letter
-  	const key = keyboard.querySelector(`[data-key="${letter}"i]`)
-	
-  	setTimeout(() => {
-    	tile.classList.add("flip")
-  	}, ((Math.pow(1.35, index) - 0.35)* FLIP_ANIMATION_DURATION) / 2)
-	
-  	tile.addEventListener("transitionend", () => {
-      	tile.classList.remove("flip")
+	const letter = tile.dataset.letter
+	const key = keyboard.querySelector(`[data-key="${letter}"i]`)
+
+	setTimeout(() => {
+		tile.classList.add("flip")
+	}, ((Math.pow(1.35, index) - 0.35) * FLIP_ANIMATION_DURATION) / 2)
+
+	tile.addEventListener("transitionend", () => {
+		tile.classList.remove("flip")
 		tile.classList.remove("active")
 
 		if (guess === targetWord) {
@@ -325,7 +325,7 @@ function flipTile(tile, index, array, guess) {
 		} else {
 			tile.classList.add("hidden")
 		}
-		
+
 		if (index === array.length - 1) {
 			tile.addEventListener("transitionend", () => {
 				startInteraction()
@@ -336,15 +336,15 @@ function flipTile(tile, index, array, guess) {
 						tile.classList.add("old")
 					});
 				}
-				
+
 				checkWinLose(guess, array)
-			},{ once: true })
+			}, { once: true })
 		}
-    }, { once: true })
+	}, { once: true })
 }
 
 function getActiveTiles() {
-    return guessGrid.querySelectorAll(".active")
+	return guessGrid.querySelectorAll(".active")
 }
 
 function getGuesses() {
@@ -353,14 +353,14 @@ function getGuesses() {
 }
 
 function showAlert(message, duration = 1000) {
-	if (alertContainer.children.length >= MAX_ALERTS) return 
-	
+	if (alertContainer.children.length >= MAX_ALERTS) return
+
 	const alert = document.createElement("div")
 	alert.textContent = message;
 	alert.classList.add("alert")
 	alertContainer.prepend(alert)
 	if (duration == null) return
-	
+
 	setTimeout(() => {
 		alert.classList.add("hide")
 		alert.addEventListener("transitionend", () => {
@@ -374,7 +374,7 @@ function shakeTiles(tiles) {
 		tile.classList.add("shake")
 		tile.addEventListener("animationend", () => {
 			tile.classList.remove("shake")
-		}, {once: true})
+		}, { once: true })
 	})
 }
 
@@ -394,12 +394,12 @@ function checkWinLose(guess, tiles) {
 }
 
 function danceTiles(tiles) {
-  	tiles.forEach((tile, index) => {
-	    setTimeout(() => {
-	      	tile.classList.add("dance")
-	      	tile.addEventListener("animationend", () => {
-	          	tile.classList.remove("dance")
-	        }, { once: true })
-	    }, (index * DANCE_ANIMATION_DURATION) / 5)
+	tiles.forEach((tile, index) => {
+		setTimeout(() => {
+			tile.classList.add("dance")
+			tile.addEventListener("animationend", () => {
+				tile.classList.remove("dance")
+			}, { once: true })
+		}, (index * DANCE_ANIMATION_DURATION) / 5)
 	})
 }
