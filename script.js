@@ -13,14 +13,14 @@ const MAX_REVEALS = 3
 const offsetFromDate = new Date(2022, 4, 6)
 const msOffset = Date.now() - offsetFromDate
 const dayOffset = Math.floor(msOffset / 1000 / 60 / 60 / 24)
-let targetWord = targetWords[dayOffset]
+let targetWord
 
 let reveals = 0
 let hasEnded = false
 
 startInteraction()
+setDaily(dayOffset)
 showAlert("Daily word generated")
-console.log('targetWord: "' + targetWord.toUpperCase() + '"')
 
 function startInteraction() {
 	document.addEventListener("click", handleMouseClick)
@@ -144,7 +144,26 @@ function focus() {
 	item.focus()
 }
 
-function newWord() {
+async function askWord(word) {
+	let response = await fetch(`https://thatwordleapi.azurewebsites.net/ask/?word=${word}`)
+	let data = await response.json()
+	return await data.Response
+}
+
+async function getWord() {
+	let response = await fetch('https://thatwordleapi.azurewebsites.net/get/')
+	let data = await response.json()
+	return await data.Response
+}
+
+async function setDaily(day) {
+	let response = await fetch(`https://thatwordleapi.azurewebsites.net/daily/?day=${day}`)
+	let data = await response.json()
+	targetWord = await data.Response
+	console.log('targetWord: "' + targetWord.toUpperCase() + '"')
+}
+
+async function newWord() {
 	stopInteraction()
 
 	reveals = 0
@@ -167,7 +186,7 @@ function newWord() {
 		key.className = "key"
 	});
 
-	targetWord = targetWords[Math.floor(Math.random() * (targetWords.length + 2))]
+	targetWord = await getWord()
 	console.log('targetWord: "' + targetWord.toUpperCase() + '"')
 
 	const alerts = alertContainer.querySelectorAll(".alert")
@@ -275,7 +294,7 @@ function deleteKey() {
 	delete lastTile.dataset.letter
 }
 
-function submitGuess() {
+async function submitGuess() {
 	const activeTiles = [...getActiveTiles()]
 
 	if (activeTiles.length !== WORD_LENGTH) {
@@ -294,7 +313,8 @@ function submitGuess() {
 		return
 	}
 
-	if (!dictionary.concat(targetWords).includes(guess)) {
+	let isWord = await askWord(guess)
+	if (!isWord) {
 		showAlert("Word not found")
 		shakeTiles(activeTiles)
 		return
