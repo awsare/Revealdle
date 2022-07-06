@@ -16,6 +16,7 @@ const dayOffset = Math.floor(msOffset / 1000 / 60 / 60 / 24)
 
 var link = document.querySelector("link[rel~='icon']");
 
+var targetWord
 var reveals = 0
 var hasEnded = false
 
@@ -161,7 +162,7 @@ async function getWord() {
 async function setDaily(day) {
 	let response = await fetch(`https://thatwordleapi.azurewebsites.net/daily/?day=${day}`)
 	let data = await response.json()
-	var targetWord = await data.Response
+	targetWord = await data.Response
 	console.log('targetWord: "' + targetWord.toUpperCase() + '"')
 }
 
