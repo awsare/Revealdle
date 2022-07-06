@@ -336,9 +336,6 @@ function flipTile(tile, index, array, guess) {
 	}, ((Math.pow(1.35, index) - 0.35) * FLIP_ANIMATION_DURATION) / 2)
 
 	tile.addEventListener("transitionend", () => {
-		if (!tile.classList.contains("flip")) {
-			return
-		}
 		tile.classList.remove("flip")
 		tile.classList.remove("active")
 
