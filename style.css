@@ -32,27 +32,27 @@
 
 .three {
 	--correct: hsl(340, 70%, 52%);
-	--wrong-location: hsl(49, 90%, 62%)
+	--wrong-location: hsl(49, 90%, 62%);
 }
 
 .four {
 	--correct: hsl(148, 54%, 60%);
-	--wrong-location: hsl(314, 38%, 80%)
+	--wrong-location: hsl(314, 38%, 80%);
 }
 
 .five {
 	--correct: hsl(71, 27%, 49%);
-	--wrong-location: hsl(24, 83%, 45%)
+	--wrong-location: hsl(24, 83%, 45%);
 }
 
 .six {
 	--correct: hsl(104, 16%, 73%);
-	--wrong-location: hsl(180, 5%, 65%)
+	--wrong-location: hsl(180, 5%, 65%);
 }
 
 .seven {
 	--correct: hsl(276, 20%, 61%);
-	--wrong-location: hsl(199, 70%, 82%)
+	--wrong-location: hsl(199, 70%, 82%);
 }
 
 .title-container {
