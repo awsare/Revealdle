@@ -13,10 +13,11 @@ const MAX_REVEALS = 3
 const offsetFromDate = new Date(2022, 4, 6)
 const msOffset = Date.now() - offsetFromDate
 const dayOffset = Math.floor(msOffset / 1000 / 60 / 60 / 24)
-let targetWord
 
-let reveals = 0
-let hasEnded = false
+var link = document.querySelector("link[rel~='icon']");
+
+var reveals = 0
+var hasEnded = false
 
 startInteraction()
 setDaily(dayOffset)
@@ -126,6 +127,7 @@ function swapTheme() {
 			else {
 				body.className = themes[u + 1]
 				showAlert("Theme switched")
+				link.href = `images/favicon_${body.className}.png`
 				break
 			}
 		}
@@ -159,7 +161,7 @@ async function getWord() {
 async function setDaily(day) {
 	let response = await fetch(`https://thatwordleapi.azurewebsites.net/daily/?day=${day}`)
 	let data = await response.json()
-	targetWord = await data.Response
+	var targetWord = await data.Response
 	console.log('targetWord: "' + targetWord.toUpperCase() + '"')
 }
 
